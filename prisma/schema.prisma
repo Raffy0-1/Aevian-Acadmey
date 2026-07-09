@@ -1,0 +1,559 @@
+// Prisma schema for Aevian — targeting Supabase Postgres
+// Stage 1: data model only. TODO(stage-3): RLS policies, real payment provider.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────
+
+enum Role {
+  STUDENT
+  PARENT
+  TEACHER
+  ADMIN
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  DROPPED
+}
+
+enum BookingType {
+  TRIAL
+  REGULAR
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  CONVERTED
+  LOST
+}
+
+enum EnglishLevel {
+  BEGINNER
+  ELEMENTARY
+  INTERMEDIATE
+  UPPER_INTERMEDIATE
+  ADVANCED
+  NATIVE
+}
+
+// ─── User & Profiles ────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  role      Role
+  name      String
+  avatarUrl String?
+  timezone  String   @default("UTC")
+  locale    String   @default("en")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parentProfile  ParentProfile?
+  studentProfile StudentProfile?
+  teacherProfile TeacherProfile?
+
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
+  notifications    Notification[]
+  blogPosts        BlogPost[]
+  supportTickets   SupportTicket[]
+
+  @@index([role])
+  @@index([email])
+}
+
+model ParentProfile {
+  id      String  @id @default(cuid())
+  userId  String  @unique
+  phone   String?
+  country String?
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  children StudentProfile[] @relation("ParentChildren")
+}
+
+model StudentProfile {
+  id           String       @id @default(cuid())
+  userId       String       @unique
+  dateOfBirth  DateTime?
+  gradeLevel   String?
+  englishLevel EnglishLevel @default(BEGINNER)
+  parentId     String?
+
+  user                 User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent               ParentProfile?       @relation("ParentChildren", fields: [parentId], references: [id])
+  enrollments          Enrollment[]
+  bookings             Booking[]
+  certificates         Certificate[]
+  quizAttempts         QuizAttempt[]
+  homeworkSubmissions  HomeworkSubmission[]
+  reviews              Review[]
+
+  @@index([parentId])
+}
+
+model TeacherProfile {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  bio             String?
+  subjects        String[] // Array of subject strings
+  yearsExperience Int      @default(0)
+  hourlyRate      Int      @default(0) // in cents
+
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courses      Course[]
+  bookings     Booking[]
+  availability Availability[]
+}
+
+// ─── Courses & Curriculum ───────────────────────────────────────────
+
+model Course {
+  id            String     @id @default(cuid())
+  title         String
+  slug          String     @unique
+  description   String
+  category      String
+  ageRangeMin   Int        @default(5)
+  ageRangeMax   Int        @default(18)
+  difficulty    Difficulty @default(BEGINNER)
+  durationWeeks Int        @default(8)
+  priceCents    Int        @default(0)
+  currency      String     @default("USD")
+  published     Boolean    @default(false)
+  teacherId     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher     TeacherProfile @relation(fields: [teacherId], references: [id])
+  modules     Module[]
+  enrollments Enrollment[]
+  bookings    Booking[]
+  certificates Certificate[]
+  reviews     Review[]
+
+  @@index([teacherId])
+  @@index([category])
+  @@index([slug])
+  @@index([published])
+}
+
+model Module {
+  id       String @id @default(cuid())
+  courseId  String
+  title    String
+  order    Int
+
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+
+  @@index([courseId])
+  @@unique([courseId, order])
+}
+
+model Lesson {
+  id              String @id @default(cuid())
+  moduleId        String
+  title           String
+  order           Int
+  videoUrl        String?
+  durationMinutes Int     @default(30)
+
+  module   Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  homework Homework[]
+  quizzes  Quiz[]
+
+  @@index([moduleId])
+  @@unique([moduleId, order])
+}
+
+// ─── Enrollment & Progress ──────────────────────────────────────────
+
+model Enrollment {
+  id              String           @id @default(cuid())
+  studentId       String
+  courseId         String
+  status          EnrollmentStatus @default(ACTIVE)
+  startedAt       DateTime         @default(now())
+  completedAt     DateTime?
+  progressPercent Int              @default(0)
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+  @@index([studentId])
+  @@index([courseId])
+  @@index([status])
+}
+
+// ─── Homework ───────────────────────────────────────────────────────
+
+model Homework {
+  id           String   @id @default(cuid())
+  lessonId     String
+  title        String
+  instructions String
+  dueAt        DateTime?
+
+  createdAt DateTime @default(now())
+
+  lesson      Lesson               @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  submissions HomeworkSubmission[]
+
+  @@index([lessonId])
+}
+
+model HomeworkSubmission {
+  id          String   @id @default(cuid())
+  homeworkId  String
+  studentId   String
+  submittedAt DateTime @default(now())
+  fileUrl     String?
+  text        String?
+  grade       String?
+  feedback    String?
+
+  homework Homework       @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  student  StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([homeworkId])
+  @@index([studentId])
+}
+
+// ─── Quizzes ────────────────────────────────────────────────────────
+
+model Quiz {
+  id       String @id @default(cuid())
+  lessonId String
+  title    String
+
+  createdAt DateTime @default(now())
+
+  lesson    Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+
+  @@index([lessonId])
+}
+
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  quizId        String
+  question      String
+  options       String[] // Array of option strings
+  correctAnswer Int      // Index into options array
+  order         Int
+
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+  @@unique([quizId, order])
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  quizId    String
+  studentId String
+  score     Int      @default(0)
+  maxScore  Int      @default(0)
+  answers   Json     // { questionId: selectedOption }
+  startedAt DateTime @default(now())
+  completedAt DateTime?
+
+  quiz    Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+  @@index([studentId])
+}
+
+// ─── Certificates ───────────────────────────────────────────────────
+
+model Certificate {
+  id                String   @id @default(cuid())
+  studentId         String
+  courseId           String
+  issuedAt          DateTime @default(now())
+  curriculumSummary Json?
+  pdfUrl            String?
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([courseId])
+}
+
+// ─── Availability & Booking ─────────────────────────────────────────
+
+model Availability {
+  id        String @id @default(cuid())
+  teacherId String
+  dayOfWeek Int    // 0 = Sunday, 6 = Saturday
+  startTime String // "HH:mm" format
+  endTime   String // "HH:mm" format
+  timezone  String @default("UTC")
+
+  teacher TeacherProfile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@index([teacherId])
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  studentId       String
+  teacherId       String
+  courseId         String?
+  type            BookingType   @default(REGULAR)
+  scheduledAt     DateTime
+  durationMinutes Int           @default(30)
+  status          BookingStatus @default(PENDING)
+  recordingUrl    String?
+  teacherNotes    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacher TeacherProfile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  course  Course?        @relation(fields: [courseId], references: [id])
+
+  @@index([studentId])
+  @@index([teacherId])
+  @@index([courseId])
+  @@index([status])
+  @@index([scheduledAt])
+}
+
+// ─── Payments & Invoicing ───────────────────────────────────────────
+// TODO(stage-3): Wire to real Stripe / payment provider.
+
+model Payment {
+  id            String        @id @default(cuid())
+  userId        String
+  amountCents   Int
+  currency      String        @default("USD")
+  status        PaymentStatus @default(PENDING)
+  provider      String?       // "stripe" etc.
+  providerTxnId String?       // External transaction ID
+  description   String?
+
+  createdAt DateTime @default(now())
+
+  invoiceId String?
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Invoice {
+  id          String        @id @default(cuid())
+  userId      String
+  amountCents Int
+  currency    String        @default("USD")
+  status      InvoiceStatus @default(DRAFT)
+  issuedAt    DateTime      @default(now())
+  dueAt       DateTime?
+  paidAt      DateTime?
+  pdfUrl      String?
+
+  payments Payment[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model DiscountCode {
+  id             String   @id @default(cuid())
+  code           String   @unique
+  description    String?
+  discountPercent Int?
+  discountAmount  Int?     // in cents
+  currency        String   @default("USD")
+  maxUses         Int?
+  currentUses     Int      @default(0)
+  validFrom       DateTime @default(now())
+  validUntil      DateTime?
+  active          Boolean  @default(true)
+
+  @@index([code])
+}
+
+// ─── Communication ──────────────────────────────────────────────────
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  subject    String?
+  body       String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([read])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // "booking_confirmed", "homework_graded", etc.
+  title     String
+  body      String?
+  read      Boolean  @default(false)
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([read])
+}
+
+// ─── Reviews ────────────────────────────────────────────────────────
+
+model Review {
+  id        String   @id @default(cuid())
+  studentId String
+  courseId   String
+  rating    Int      // 1–5
+  comment   String?
+  createdAt DateTime @default(now())
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+  @@index([courseId])
+}
+
+// ─── Blog ───────────────────────────────────────────────────────────
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  authorId    String
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String
+  coverImage  String?
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  tags        String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([authorId])
+  @@index([slug])
+  @@index([published])
+}
+
+// ─── Media ──────────────────────────────────────────────────────────
+
+model Media {
+  id        String   @id @default(cuid())
+  filename  String
+  url       String
+  mimeType  String?
+  sizeBytes Int?
+  altText   String?
+  uploadedBy String?
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Support ────────────────────────────────────────────────────────
+
+model SupportTicket {
+  id          String       @id @default(cuid())
+  userId      String
+  subject     String
+  description String
+  status      TicketStatus @default(OPEN)
+  priority    String       @default("medium") // low, medium, high, urgent
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+}
+
+// ─── CRM / Leads ────────────────────────────────────────────────────
+
+model Lead {
+  id          String     @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  source      String?    // "website", "referral", "ad", etc.
+  status      LeadStatus @default(NEW)
+  notes       String?
+  assignedTo  String?    // Admin user id
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([email])
+}

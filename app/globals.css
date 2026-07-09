@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  AEVIAN TOKENS
+  Light mode reads as "vellum" — a cool, quiet paper tone, not the warm
+  cream+terracotta combination that's become an AI-generated default.
+  Dark mode reads as "ink" — a charcoal-navy, not a pure near-black.
+  Gold is spent deliberately: enrollment CTAs, active states, the
+  constellation motif. It never fills large surfaces.
+*/
+
+@layer base {
+  :root {
+    --ink: #12181f;
+    --chalk: #f3f4f0;
+
+    --meridian: #1f3d46;
+    --meridian-foreground: #f3f4f0;
+
+    --gold: #b8925a;
+    --gold-foreground: #12181f;
+
+    --slate: #5b6570;
+
+    --background: var(--chalk);
+    --foreground: var(--ink);
+
+    --card: #ffffff;
+    --card-foreground: var(--ink);
+
+    --muted: #e7e7e1;
+    --muted-foreground: var(--slate);
+
+    --border: #dcdcd4;
+
+    --success: #3f7a5c;
+    --warning: #b8863a;
+    --danger: #b84b3f;
+    --info: #3e6fa6;
+  }
+
+  .dark {
+    --background: var(--ink);
+    --foreground: #f3f4f0;
+
+    --card: #181f28;
+    --card-foreground: #f3f4f0;
+
+    --muted: #1e2630;
+    --muted-foreground: #9aa3ac;
+
+    --border: #2a323c;
+
+    --meridian: #3f7386;
+    --meridian-foreground: #12181f;
+
+    --success: #5ea081;
+    --warning: #d1a35c;
+    --danger: #d4766a;
+    --info: #6f9bc9;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
