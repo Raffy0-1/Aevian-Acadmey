@@ -26,7 +26,7 @@ function isRateLimited(key: string): boolean {
  */
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const ip = request.ip || request.headers.get("x-forwarded-for") || "unknown";
+  const ip = (request as any).ip || request.headers.get("x-forwarded-for") || "unknown";
 
   // Rate limit sensitive endpoints
   if (

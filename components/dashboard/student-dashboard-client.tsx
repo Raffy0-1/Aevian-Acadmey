@@ -443,7 +443,7 @@ export function StudentDashboardClient({
                 />
               </label>
               {uploadedUrl && (
-                <Badge variant="outline" className="text-success border-success/30">
+                <Badge className="text-success border-success/30 bg-success/10">
                   Uploaded
                 </Badge>
               )}
