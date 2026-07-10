@@ -1,13 +1,48 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+// In-memory sliding window rate limiter for Edge Runtime
+const rateLimitStore = new Map<string, number[]>();
+const LIMIT = 15; // Max 15 requests
+const WINDOW = 60 * 1000; // per 1 minute window
+
+function isRateLimited(key: string): boolean {
+  const now = Date.now();
+  const timestamps = rateLimitStore.get(key) || [];
+  const activeTimestamps = timestamps.filter((time) => now - time < WINDOW);
+  
+  if (activeTimestamps.length >= LIMIT) {
+    return true;
+  }
+  
+  activeTimestamps.push(now);
+  rateLimitStore.set(key, activeTimestamps);
+  return false;
+}
+
 /**
  * Middleware: refreshes Supabase auth session on every request and
  * redirects unauthenticated users away from /dashboard/*.
- *
- * TODO(stage-3): Add rate limiting, CSRF protection.
  */
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const ip = request.ip || request.headers.get("x-forwarded-for") || "unknown";
+
+  // Rate limit sensitive endpoints
+  if (
+    path === "/login" ||
+    path === "/signup" ||
+    path === "/book-trial" ||
+    path.startsWith("/api/auth")
+  ) {
+    if (isRateLimited(`${ip}:${path}`)) {
+      return new NextResponse("Too many requests. Please try again in a minute.", {
+        status: 429,
+        headers: { "Content-Type": "text/plain" },
+      });
+    }
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
