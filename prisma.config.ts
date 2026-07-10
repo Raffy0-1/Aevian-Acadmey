@@ -1,5 +1,8 @@
 import path from "node:path";
 import { defineConfig } from "prisma/config";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 /**
  * Prisma v7 config — connection URLs moved here from schema.prisma.
@@ -7,7 +10,10 @@ import { defineConfig } from "prisma/config";
  */
 export default defineConfig({
   schema: path.join(__dirname, "prisma", "schema.prisma"),
-  migrate: {
+  datasource: {
     url: process.env.DATABASE_URL!,
+  },
+  migrate: {
+    url: process.env.DIRECT_URL!,
   },
 });

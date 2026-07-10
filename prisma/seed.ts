@@ -11,9 +11,8 @@
  * messages, and notifications.
  */
 
-import { PrismaClient, Role, Difficulty, EnrollmentStatus, BookingType, BookingStatus, PaymentStatus, InvoiceStatus, TicketStatus, LeadStatus, EnglishLevel } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { Role, Difficulty, EnrollmentStatus, BookingType, BookingStatus, PaymentStatus, InvoiceStatus, TicketStatus, LeadStatus, EnglishLevel } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 
 async function main() {
   console.log("🌱 Seeding Aevian database…");
