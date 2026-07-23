@@ -39,7 +39,7 @@ export default function ProgramsPage() {
                     >
                       <div className="flex flex-wrap gap-2 mb-4">
                         {course.badges.map(badge => (
-                          <Badge key={badge} variant="secondary" className="bg-meridian/10 text-meridian">{badge}</Badge>
+                          <Badge key={badge} className="bg-meridian/10 text-meridian">{badge}</Badge>
                         ))}
                       </div>
                       <h3 className="text-xl font-medium text-foreground group-hover:text-meridian">

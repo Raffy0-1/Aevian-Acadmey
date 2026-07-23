@@ -55,8 +55,8 @@ export default async function ProgramDetailPage({ params }: PageProps) {
             <div>
               <div className="flex flex-wrap gap-2">
                 <Badge>{categoryName}</Badge>
-                {course.badges.map(b => <Badge key={b} variant="secondary">{b}</Badge>)}
-                {course.curriculumTags.map(t => <Badge key={t} variant="outline">{t}</Badge>)}
+                {course.badges.map(b => <Badge key={b}>{b}</Badge>)}
+                {course.curriculumTags.map(t => <Badge key={t}>{t}</Badge>)}
               </div>
               <h1 className="mt-4 font-display text-4xl leading-tight text-foreground sm:text-5xl">
                 {course.title}
