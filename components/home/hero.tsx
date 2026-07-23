@@ -9,16 +9,14 @@ export function Hero() {
       <Container className="grid items-center gap-12 py-20 sm:py-28 lg:grid-cols-2 lg:py-32">
         <div className="animate-fade-up">
           <p className="mb-5 font-mono text-xs uppercase tracking-[0.14em] text-gold">
-            Live online academy · Ages 6–18
+            Global Online Learning Platform
           </p>
           <h1 className="text-balance text-4xl leading-[1.1] sm:text-5xl lg:text-[3.25rem]">
-            Learning, built to last —
-            <span className="italic text-gold"> not just to finish.</span>
+            Connecting Students Worldwide with
+            <span className="italic text-gold"> Expert Teachers.</span>
           </h1>
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-chalk/75">
-            Aevian pairs students with real teachers in small live classes,
-            on a curriculum designed so each lesson unlocks the next —
-            instead of a library of videos to work through alone.
+            Empowering students globally through personalized 1-on-1 tutoring, international curriculum expertise, and premium test preparation.
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <Button variant="gold" size="lg">

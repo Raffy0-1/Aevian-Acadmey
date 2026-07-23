@@ -83,6 +83,37 @@ enum EnglishLevel {
   NATIVE
 }
 
+enum ProgramArea {
+  INTERNATIONAL_CURRICULUM
+  SCHOOL_ASSESSMENT
+  TEST_PREPARATION
+  QURAN_PROGRAMS
+  LANGUAGE_SKILLS
+  ISLAMIC_FOUNDATIONS
+}
+
+enum CurriculumTag {
+  AUSTRALIAN
+  CAMBRIDGE
+  IB
+  UK
+  AMERICAN
+}
+
+enum Badge {
+  BEST_FOR_SCHOOL
+  UNI_ADMISSION
+  INTL_CURRICULUM
+  BEGINNER_FRIENDLY
+}
+
+enum Currency {
+  GBP
+  USD
+  PKR
+}
+
+
 // ─── User & Profiles ────────────────────────────────────────────────
 
 model User {
@@ -157,34 +188,62 @@ model TeacherProfile {
 // ─── Courses & Curriculum ───────────────────────────────────────────
 
 model Course {
-  id            String     @id @default(cuid())
-  title         String
-  slug          String     @unique
-  description   String
-  category      String
-  ageRangeMin   Int        @default(5)
-  ageRangeMax   Int        @default(18)
-  difficulty    Difficulty @default(BEGINNER)
-  durationWeeks Int        @default(8)
-  priceCents    Int        @default(0)
-  currency      String     @default("USD")
-  published     Boolean    @default(false)
-  teacherId     String
+  id               String          @id @default(cuid())
+  title            String
+  slug             String          @unique
+  description      String
+  programArea      ProgramArea
+  curriculumTags   CurriculumTag[]
+  badges           Badge[]
+  targetStudents   String?
+  learningOutcomes String[]
+  ageRangeMin      Int             @default(5)
+  ageRangeMax      Int             @default(18)
+  difficulty       Difficulty      @default(BEGINNER)
+  durationWeeks    Int             @default(8)
+  published        Boolean         @default(false)
+  teacherId        String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  teacher     TeacherProfile @relation(fields: [teacherId], references: [id])
-  modules     Module[]
-  enrollments Enrollment[]
-  bookings    Booking[]
+  teacher      TeacherProfile @relation(fields: [teacherId], references: [id])
+  modules      Module[]
+  enrollments  Enrollment[]
+  bookings     Booking[]
   certificates Certificate[]
-  reviews     Review[]
+  reviews      Review[]
+  packages     Package[]
 
   @@index([teacherId])
-  @@index([category])
+  @@index([programArea])
   @@index([slug])
   @@index([published])
+}
+
+model Package {
+  id          String         @id @default(cuid())
+  courseId    String
+  name        String
+  description String?
+  
+  prices      PackagePrice[]
+
+  course      Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@index([courseId])
+}
+
+model PackagePrice {
+  id          String   @id @default(cuid())
+  packageId   String
+  currency    Currency
+  priceCents  Int
+
+  package     Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, currency])
+  @@index([packageId])
 }
 
 model Module {

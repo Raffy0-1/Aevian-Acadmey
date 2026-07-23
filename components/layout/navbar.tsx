@@ -8,11 +8,10 @@ import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/courses", label: "Courses" },
-  { href: "/teachers", label: "Teachers" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/success-stories", label: "Success Stories" },
-  { href: "/about", label: "About" },
+  { href: "/programs", label: "Programs" },
+  { href: "/parents", label: "For Parents" },
+  { href: "/teachers/join", label: "For Teachers" },
+  { href: "/countries", label: "Countries We Serve" },
 ];
 
 export function Navbar() {
