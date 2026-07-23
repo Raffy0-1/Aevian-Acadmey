@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { Difficulty } from "@prisma/client";
+import { Difficulty, ProgramArea } from "@prisma/client";
 
 // TODO(stage-3): RLS — only admins/teachers can create/edit courses.
 
@@ -10,13 +10,11 @@ const createCourseSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   slug: z.string().min(3).regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  category: z.string().min(1, "Category is required"),
+  programArea: z.nativeEnum(ProgramArea),
   ageRangeMin: z.number().int().min(3).max(25).default(5),
   ageRangeMax: z.number().int().min(3).max(25).default(18),
   difficulty: z.nativeEnum(Difficulty),
   durationWeeks: z.number().int().min(1).default(8),
-  priceCents: z.number().int().min(0).default(0),
-  currency: z.string().default("USD"),
   teacherId: z.string().min(1, "Teacher is required"),
   published: z.boolean().default(false),
 });
@@ -35,14 +33,14 @@ export type CourseActionResult = {
  * Get all published courses, optionally filtered.
  */
 export async function getCourses(filters?: {
-  category?: string;
+  programArea?: ProgramArea;
   difficulty?: Difficulty;
   search?: string;
 }) {
   return prisma.course.findMany({
     where: {
       published: true,
-      ...(filters?.category ? { category: filters.category } : {}),
+      ...(filters?.programArea ? { programArea: filters.programArea } : {}),
       ...(filters?.difficulty ? { difficulty: filters.difficulty } : {}),
       ...(filters?.search
         ? {
