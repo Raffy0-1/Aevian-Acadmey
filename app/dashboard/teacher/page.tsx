@@ -9,7 +9,16 @@ export default async function TeacherDashboardPage() {
   if (!user || user.role !== "TEACHER") redirect("/dashboard");
 
   const teacherProfile = user.teacherProfile;
-  if (!teacherProfile) redirect("/dashboard");
+  if (!teacherProfile) {
+    return (
+      <div className="p-16 text-center space-y-4">
+        <h1 className="font-display text-3xl text-foreground">Profile Incomplete</h1>
+        <p className="text-muted-foreground">
+          Your teacher profile has not been fully set up yet. Please contact administration to complete your onboarding.
+        </p>
+      </div>
+    );
+  }
 
   const [bookings, availability] = await Promise.all([
     prisma.booking.findMany({
@@ -54,7 +63,7 @@ export default async function TeacherDashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-display text-3xl text-foreground">
-          Welcome back, {user.name.split(" ")[0]}
+          Welcome back, {user.name ? user.name.split(" ")[0] : "Teacher"}
         </h1>
         <p className="mt-1 text-muted-foreground">
           Teacher Dashboard — check upcoming schedules, manage class registers, and update schedules.

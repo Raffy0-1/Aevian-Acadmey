@@ -9,7 +9,16 @@ export default async function ParentDashboardPage() {
   if (!user || user.role !== "PARENT") redirect("/dashboard");
 
   const parentProfile = user.parentProfile;
-  if (!parentProfile) redirect("/dashboard");
+  if (!parentProfile) {
+    return (
+      <div className="p-16 text-center space-y-4">
+        <h1 className="font-display text-3xl text-foreground">Profile Incomplete</h1>
+        <p className="text-muted-foreground">
+          Your parent profile has not been fully set up yet. Please contact support to complete your registration.
+        </p>
+      </div>
+    );
+  }
 
   // Fetch children and their data
   const children = await prisma.studentProfile.findMany({
@@ -73,7 +82,7 @@ export default async function ParentDashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-display text-3xl text-foreground">
-          Welcome back, {user.name.split(" ")[0]}
+          Welcome back, {user.name ? user.name.split(" ")[0] : "Parent"}
         </h1>
         <p className="mt-1 text-muted-foreground">
           Parent Dashboard — manage learning paths and track schedule updates.
