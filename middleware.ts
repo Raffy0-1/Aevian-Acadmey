@@ -80,10 +80,14 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh the session — important for Server Components
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Refresh the session — wrapped in try/catch to prevent edge runtime crashes
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch (err) {
+    console.warn("Middleware auth refresh warning:", (err as Error)?.message);
+  }
 
   // Protect dashboard routes
   if (request.nextUrl.pathname.startsWith("/dashboard") && !user) {
@@ -105,6 +109,7 @@ export async function middleware(request: NextRequest) {
   }
 
   return supabaseResponse;
+
 }
 
 export const config = {
