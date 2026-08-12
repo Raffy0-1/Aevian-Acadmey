@@ -3,6 +3,7 @@ import { Check } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
+import { ScrollReveal, ScrollRevealStagger } from "@/components/ui/scroll-reveal";
 import { cn } from "@/lib/utils";
 
 const plans = [
@@ -10,95 +11,108 @@ const plans = [
     name: "Starter",
     price: "$79",
     period: "/ month",
-    description: "One course, one weekly class",
-    features: ["1 live class per week", "Progress dashboard", "Homework feedback"],
+    description: "Ideal for single subject focus & weekly guidance",
+    features: [
+      "1 live 1-on-1 class per week",
+      "Real-time learning path dashboard",
+      "Homework & assignment feedback",
+      "Direct teacher messaging",
+    ],
     highlighted: false,
   },
   {
-    name: "Growth",
+    name: "Growth (Most Popular)",
     price: "$149",
     period: "/ month",
-    description: "Two courses, steady momentum",
+    description: "Two core subjects, steady momentum & exam track",
     features: [
-      "2 live classes per week",
-      "Progress dashboard",
-      "Homework feedback",
-      "Priority scheduling",
+      "2 live 1-on-1 classes per week",
+      "Real-time learning path dashboard",
+      "Detailed assignment feedback & grading",
+      "Priority scheduling & exam prep materials",
+      "Monthly parent progress consultation",
     ],
     highlighted: true,
   },
   {
-    name: "Immersion",
+    name: "Immersion Mastery",
     price: "$259",
     period: "/ month",
-    description: "Multiple subjects, exam-track pace",
+    description: "Multi-subject intensive track for top IB/IGCSE results",
     features: [
-      "4 live classes per week",
-      "Progress dashboard",
-      "Priority scheduling",
-      "Monthly teacher call",
+      "4 live 1-on-1 classes per week",
+      "Comprehensive diagnostic assessment",
+      "Priority 24/7 educator availability",
+      "Bi-weekly parent review sessions",
+      "SAT / IB Exam strategy workshops",
     ],
     highlighted: false,
   },
 ];
 
-import { ScrollReveal, ScrollRevealStagger } from "@/components/ui/scroll-reveal";
-
 export function PricingPreview() {
   return (
-    <section className="py-20 sm:py-28">
+    <section className="py-20 lg:py-28 bg-cream border-b border-slate-border/50">
       <Container>
         <ScrollReveal>
           <SectionHeading
-            eyebrow="Pricing"
-            title="Simple plans, cancel anytime"
+            eyebrow="Transparent Tuition"
+            title="Simple monthly plans with no hidden fees"
+            description="All plans include live interactive instruction, dedicated educator support, and our proprietary Learning Path analytics."
             align="center"
             className="mx-auto"
           />
         </ScrollReveal>
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
+        <div className="mt-14 grid gap-8 lg:grid-cols-3">
           <ScrollRevealStagger>
             {plans.map((plan) => (
               <div
                 key={plan.name}
                 className={cn(
-                  "flex flex-col rounded-lg border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-md",
+                  "flex flex-col rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1.5 shadow-lg",
                   plan.highlighted
-                    ? "border-meridian bg-meridian text-meridian-foreground hover:shadow-meridian/20"
-                    : "border-border bg-card hover:border-gold/30 hover:bg-card/90"
+                    ? "bg-navy text-white border-2 border-copper relative copper-glow"
+                    : "bg-white text-navy border border-slate-border hover:border-copper/40"
                 )}
               >
-                <p className="font-mono text-xs uppercase tracking-wide opacity-70">
+                {plan.highlighted && (
+                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-copper px-3 py-1 text-xs font-bold text-white uppercase tracking-wider">
+                    Recommended
+                  </span>
+                )}
+                <p className={cn("font-mono text-xs font-semibold uppercase tracking-wider", plan.highlighted ? "text-copper" : "text-slate")}>
                   {plan.name}
                 </p>
-                <p className="mt-3 flex items-baseline gap-1">
-                  <span className="text-3xl font-display">{plan.price}</span>
-                  <span className="text-sm opacity-70">{plan.period}</span>
+                <p className="mt-4 flex items-baseline gap-1">
+                  <span className="text-4xl font-extrabold font-display">{plan.price}</span>
+                  <span className={cn("text-sm", plan.highlighted ? "text-slate-light" : "text-slate")}>{plan.period}</span>
                 </p>
-                <p className="mt-2 text-sm opacity-80">{plan.description}</p>
-                <ul className="mt-6 flex-1 space-y-3">
+                <p className={cn("mt-2 text-xs leading-relaxed", plan.highlighted ? "text-slate-light" : "text-slate")}>{plan.description}</p>
+                <ul className="mt-6 flex-1 space-y-3.5">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm">
-                      <Check size={15} className={plan.highlighted ? "text-gold" : "text-meridian"} />
-                      {f}
+                    <li key={f} className="flex items-start gap-2.5 text-xs font-medium">
+                      <Check size={16} className={plan.highlighted ? "text-copper shrink-0 mt-0.5" : "text-copper shrink-0 mt-0.5"} />
+                      <span className={plan.highlighted ? "text-cream" : "text-navy"}>{f}</span>
                     </li>
                   ))}
                 </ul>
-                <Button
-                  variant={plan.highlighted ? "gold" : "outline"}
-                  className="mt-8"
-                >
-                  Choose {plan.name}
-                </Button>
+                <Link href="/book-trial" className="mt-8">
+                  <Button
+                    variant={plan.highlighted ? "copper" : "outline"}
+                    className="w-full justify-center"
+                  >
+                    Start Free Trial
+                  </Button>
+                </Link>
               </div>
             ))}
           </ScrollRevealStagger>
         </div>
         <ScrollReveal>
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            Need something custom for a school or group?{" "}
-            <Link href="/contact" className="text-meridian hover:underline">
-              Talk to us
+          <p className="mt-10 text-center text-sm text-slate">
+            Need a custom schedule or institutional group tutoring?{" "}
+            <Link href="/contact" className="font-semibold text-copper hover:underline">
+              Contact our academic team &rarr;
             </Link>
           </p>
         </ScrollReveal>
@@ -106,3 +120,4 @@ export function PricingPreview() {
     </section>
   );
 }
+

@@ -3,63 +3,48 @@
 @tailwind utilities;
 
 /*
-  AEVIAN TOKENS
-  Light mode reads as "vellum" — a cool, quiet paper tone, not the warm
-  cream+terracotta combination that's become an AI-generated default.
-  Dark mode reads as "ink" — a charcoal-navy, not a pure near-black.
-  Gold is spent deliberately: enrollment CTAs, active states, the
-  constellation motif. It never fills large surfaces.
+  AEVIAN BRAND IDENTITY DESIGN SYSTEM
+  - Background: Warm Ivory Cream (#FAF7F2)
+  - Primary Navy: Deep Slate (#1C2A38)
+  - Accent Copper: Terracotta Rust (#C86D51)
+  - Muted Slate: (#5A6B7C)
 */
 
 @layer base {
   :root {
-    --ink: #12181f;
-    --chalk: #f3f4f0;
+    --background: #FAF7F2;
+    --foreground: #1C2A38;
 
-    --meridian: #1f3d46;
-    --meridian-foreground: #f3f4f0;
+    --card: #FFFFFF;
+    --card-foreground: #1C2A38;
 
-    --gold: #b8925a;
-    --gold-foreground: #12181f;
+    --muted: #F0EAE1;
+    --muted-foreground: #5A6B7C;
 
-    --slate: #5b6570;
+    --border: #E5DCD0;
 
-    --background: var(--chalk);
-    --foreground: var(--ink);
+    --primary: #C86D51;
+    --primary-foreground: #FFFFFF;
 
-    --card: #ffffff;
-    --card-foreground: var(--ink);
-
-    --muted: #e7e7e1;
-    --muted-foreground: var(--slate);
-
-    --border: #dcdcd4;
-
-    --success: #3f7a5c;
-    --warning: #b8863a;
-    --danger: #b84b3f;
-    --info: #3e6fa6;
+    --navy: #1C2A38;
+    --copper: #C86D51;
+    --slate: #5A6B7C;
   }
 
   .dark {
-    --background: var(--ink);
-    --foreground: #f3f4f0;
+    --background: #111A24;
+    --foreground: #FAF7F2;
 
-    --card: #181f28;
-    --card-foreground: #f3f4f0;
+    --card: #1C2A38;
+    --card-foreground: #FAF7F2;
 
-    --muted: #1e2630;
-    --muted-foreground: #9aa3ac;
+    --muted: #253547;
+    --muted-foreground: #8B9BB0;
 
-    --border: #2a323c;
+    --border: #2A3C4E;
 
-    --meridian: #3f7386;
-    --meridian-foreground: #12181f;
-
-    --success: #5ea081;
-    --warning: #d1a35c;
-    --danger: #d4766a;
-    --info: #6f9bc9;
+    --primary: #C86D51;
+    --primary-foreground: #FFFFFF;
   }
 
   * {
@@ -71,11 +56,11 @@
   }
 
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground font-body antialiased selection:bg-copper/20 selection:text-copper;
   }
 
-  h1, h2, h3, h4 {
-    @apply font-display;
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-navy dark:text-cream;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -92,4 +77,32 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(229, 220, 208, 0.6);
+  }
+
+  .dark .glass-card {
+    background: rgba(28, 42, 56, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(42, 60, 78, 0.6);
+  }
+
+  .copper-glow {
+    box-shadow: 0 10px 30px -5px rgba(200, 109, 81, 0.25);
+  }
 }
+
+/* Loading Bar Animation */
+@keyframes loadingProgress {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-loading-bar {
+  animation: loadingProgress 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+

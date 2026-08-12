@@ -1,16 +1,11 @@
 import type { Config } from "tailwindcss";
 
-// AEVIAN DESIGN SYSTEM
-// -----------------------------------------------------------------------------
-// Palette (named, 6 core tokens — see README.md for full rationale):
-//   ink       #12181F  deep charcoal-navy — dark mode ground, hero backdrop
-//   chalk     #F3F4F0  pale grey-green (cool, not cream) — light mode ground
-//   meridian  #1F3D46  deep teal-indigo — primary brand color
-//   gold      #B8925A  antique gold — accent, used sparingly (the "signature" color)
-//   slate     #5B6570  muted neutral — secondary text, borders
-//   + semantic: success / warning / danger / info
-// All colors are exposed as CSS custom properties in globals.css so light/dark
-// mode can swap values without duplicating the token map.
+// AEVIAN BRAND DESIGN SYSTEM
+// Palette based on Brand Identity Exploration Moodboard:
+//   navy      #1C2A38  Deep Slate Navy — primary headlines, brand icon left stem, dark cards
+//   copper    #C86D51  Terracotta Rust / Warm Copper — signature accent, logo right leg, primary buttons
+//   cream     #FAF7F2  Warm Ivory Cream — light mode ground surface
+//   slate     #5A6B7C  Muted Slate — secondary body text, borders
 const config: Config = {
   darkMode: ["class"],
   content: [
@@ -26,17 +21,26 @@ const config: Config = {
     },
     extend: {
       colors: {
-        ink: "var(--ink)",
-        chalk: "var(--chalk)",
-        meridian: {
-          DEFAULT: "var(--meridian)",
-          foreground: "var(--meridian-foreground)",
+        navy: {
+          DEFAULT: "#1C2A38",
+          dark: "#111A24",
+          light: "#2A3C4E",
         },
-        gold: {
-          DEFAULT: "var(--gold)",
-          foreground: "var(--gold-foreground)",
+        copper: {
+          DEFAULT: "#C86D51",
+          hover: "#B65B40",
+          light: "#F5EAE6",
         },
-        slate: "var(--slate)",
+        cream: {
+          DEFAULT: "#FAF7F2",
+          card: "#FFFFFF",
+          muted: "#F0EAE1",
+        },
+        slate: {
+          DEFAULT: "#5A6B7C",
+          light: "#8B9BB0",
+          border: "#E2D9CD",
+        },
         background: "var(--background)",
         foreground: "var(--foreground)",
         border: "var(--border)",
@@ -48,37 +52,46 @@ const config: Config = {
           DEFAULT: "var(--card)",
           foreground: "var(--card-foreground)",
         },
-        success: "var(--success)",
-        warning: "var(--warning)",
-        danger: "var(--danger)",
-        info: "var(--info)",
       },
       fontFamily: {
-        display: ["var(--font-display)", "Georgia", "serif"],
-        body: ["var(--font-body)", "Helvetica", "Arial", "sans-serif"],
+        display: ["var(--font-display)", "Plus Jakarta Sans", "sans-serif"],
+        body: ["var(--font-body)", "Inter", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
       borderRadius: {
-        sm: "0.375rem",
-        md: "0.625rem",
+        sm: "0.5rem",
+        md: "0.75rem",
         lg: "1rem",
         xl: "1.5rem",
-      },
-      maxWidth: {
-        prose: "68ch",
+        "2xl": "2rem",
       },
       keyframes: {
         "fade-up": {
-          "0%": { opacity: "0", transform: "translateY(12px)" },
+          "0%": { opacity: "0", transform: "translateY(16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        "draw-line": {
-          "0%": { strokeDashoffset: "1" },
-          "100%": { strokeDashoffset: "0" },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        pulsePath: {
+          "0%, 100%": { opacity: "0.4", strokeDashoffset: "0" },
+          "50%": { opacity: "1", strokeDashoffset: "20" },
+        },
+        shimmer: {
+          "100%": { transform: "translateX(100%)" },
+        },
+        spinSlow: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
         },
       },
       animation: {
-        "fade-up": "fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "fade-up": "fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "fade-in": "fade-in 0.4s ease-out both",
+        "pulse-path": "pulsePath 3s ease-in-out infinite",
+        shimmer: "shimmer 2s infinite",
+        "spin-slow": "spinSlow 12s linear infinite",
       },
     },
   },
@@ -86,3 +99,4 @@ const config: Config = {
 };
 
 export default config;
+

@@ -170,20 +170,14 @@ export default function SignupPage() {
 
         <Button
           type="submit"
-          variant="primary"
-          disabled={loading}
-          className="w-full"
+          variant="copper"
+          isLoading={loading}
+          className="w-full mt-2"
         >
-          {loading ? (
-            <>
-              <Loader2 size={16} className="animate-spin" />
-              Creating account...
-            </>
-          ) : (
-            "Create account"
-          )}
+          Create Account
         </Button>
       </form>
     </AuthCard>
   );
 }
+

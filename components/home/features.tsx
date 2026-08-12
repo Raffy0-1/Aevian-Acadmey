@@ -6,39 +6,39 @@ import { ScrollReveal, ScrollRevealStagger } from "@/components/ui/scroll-reveal
 const features = [
   {
     icon: Users,
-    title: "Small live classes",
+    title: "1-on-1 & Small Live Classes",
     description:
-      "Under eight students per class, so your teacher actually knows how each one is doing — not just their name.",
+      "Under eight students per class or direct 1-on-1 mentorship so your teacher actually tailors feedback to your learning pace.",
   },
   {
     icon: GitBranch,
-    title: "Curricula that connect",
+    title: "The Learning Path Strategy",
     description:
-      "Every lesson is built to unlock the next one. Progress is a path, not a pile of unrelated videos.",
+      "Every lesson is built to unlock the next milestone. Progress is a structured geometric path, not a pile of disjointed videos.",
   },
   {
     icon: ShieldCheck,
-    title: "Vetted, credentialed teachers",
+    title: "Vetted Master Educators",
     description:
-      "Every teacher is interviewed, background-checked, and observed live before they lead their first class.",
+      "Top 5% of international educators interviewed, background-checked, and observed live before leading classes.",
   },
   {
     icon: LineChart,
-    title: "Progress you can see",
+    title: "Visible Real-Time Progress",
     description:
-      "Parents get real feedback after every class — what was covered, what to practice, what's next.",
+      "Parents and students receive detailed performance metrics and critical thinking analytics after every class session.",
   },
 ];
 
 export function Features() {
   return (
-    <section className="py-20 sm:py-28">
+    <section className="py-20 lg:py-28 bg-cream border-b border-slate-border/50">
       <Container>
         <ScrollReveal>
           <SectionHeading
-            eyebrow="Why Aevian"
-            title="Built around the teacher, not the video player"
-            description="Most platforms scale by removing the teacher from the loop. Aevian scales the teacher — smaller classes, better tools, clearer feedback."
+            eyebrow="The Aevian Advantage"
+            title="Built around master teachers, structured paths & real growth"
+            description="Most platforms scale by replacing teachers with pre-recorded videos. Aevian empowers master educators with small classes, better tools, and compounding learning paths."
           />
         </ScrollReveal>
         <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -46,11 +46,13 @@ export function Features() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="rounded-lg border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-gold/30 hover:bg-card/90"
+                className="group rounded-2xl border border-slate-border bg-white p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-copper/40"
               >
-                <feature.icon className="text-meridian transition-colors group-hover:text-gold" size={22} strokeWidth={1.5} />
-                <h3 className="mt-4 text-lg">{feature.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-copper/10 text-copper transition-colors group-hover:bg-copper group-hover:text-white">
+                  <feature.icon size={22} strokeWidth={1.8} />
+                </div>
+                <h3 className="mt-5 text-lg font-bold text-navy tracking-tight">{feature.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate">
                   {feature.description}
                 </p>
               </div>
@@ -61,3 +63,4 @@ export function Features() {
     </section>
   );
 }
+

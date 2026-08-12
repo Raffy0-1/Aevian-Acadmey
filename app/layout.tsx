@@ -1,26 +1,19 @@
 import type { Metadata } from "next";
-import { Newsreader, Public_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-// Display: Newsreader — a serif built for long reading, giving the page an
-// academic, unhurried gravitas without leaning on the high-contrast
-// Didone-style serif that's become a template signal.
-const display = Newsreader({
+const display = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-display",
-  style: ["normal", "italic"],
+  weight: ["500", "600", "700", "800"],
+});
+
+const body = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
   weight: ["400", "500", "600"],
 });
 
-// Body: Public Sans — a clean, highly legible grotesk with a civic,
-// no-nonsense character that keeps long dashboard copy comfortable.
-const body = Public_Sans({
-  subsets: ["latin"],
-  variable: "--font-body",
-  weight: ["400", "500", "600", "700"],
-});
-
-// Utility: IBM Plex Mono — for course codes, timestamps, and data.
 const mono = IBM_Plex_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
@@ -28,23 +21,52 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aevian.com"),
+  metadataBase: new URL("https://aevianacademy.com"),
   title: {
-    default: "Aevian — Learning built to last",
-    template: "%s · Aevian",
+    default: "Aevian Academy — Premium Modern Ed-Tech & Global Tutoring",
+    template: "%s · Aevian Academy",
   },
   description:
-    "Aevian is a live online academy connecting students with expert teachers across the world, built around curricula designed to compound — not expire.",
+    "Aevian Academy is a premier live online academy connecting students worldwide with top international teachers across IB, IGCSE, SAT, AP, and critical thinking curricula.",
+  keywords: [
+    "Aevian Academy",
+    "Online Tutoring",
+    "IB Tutoring",
+    "IGCSE Classes",
+    "SAT Prep",
+    "Global Online School",
+    "1-on-1 Tutoring",
+    "Critical Thinking Education",
+  ],
+  authors: [{ name: "Aevian Academy" }],
   openGraph: {
-    title: "Aevian — Learning built to last",
+    title: "Aevian Academy — The Learning Path to Academic Excellence",
     description:
-      "Live online classes, real teachers, curricula designed to compound.",
-    siteName: "Aevian",
+      "Live 1-on-1 online classes, international master teachers, structured curricula designed to compound.",
+    url: "https://aevianacademy.com",
+    siteName: "Aevian Academy",
+    images: [
+      {
+        url: "/icon.png",
+        width: 1200,
+        height: 630,
+        alt: "Aevian Academy Brand Identity",
+      },
+    ],
+    locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Aevian — Learning built to last",
+    title: "Aevian Academy — Premier Live Online Learning",
+    description:
+      "Empowering students globally through structured learning paths and expert educators.",
+    images: ["/icon.png"],
+  },
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
@@ -53,13 +75,34 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    name: "Aevian Academy",
+    url: "https://aevianacademy.com",
+    logo: "https://aevianacademy.com/icon.png",
+    description:
+      "Global ed-tech platform connecting students worldwide with expert live tutors for IB, IGCSE, SAT, AP, and critical thinking advancement.",
+    sameAs: [
+      "https://instagram.com/aevianacademy",
+      "https://linkedin.com/company/aevianacademy",
+    ],
+  };
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
-        className={`${display.variable} ${body.variable} ${mono.variable} font-body`}
+        className={`${display.variable} ${body.variable} ${mono.variable} font-body bg-background text-foreground min-h-screen flex flex-col antialiased`}
       >
         {children}
       </body>
     </html>
   );
 }
+

@@ -1,16 +1,28 @@
 import { cn } from "@/lib/utils";
 
+interface BadgeProps {
+  className?: string;
+  variant?: "copper" | "navy" | "outline" | "default";
+  children: React.ReactNode;
+}
+
 export function Badge({
   className,
+  variant = "copper",
   children,
-}: {
-  className?: string;
-  children: React.ReactNode;
-}) {
+}: BadgeProps) {
+  const variantStyles = {
+    copper: "border-copper/30 bg-copper/10 text-copper font-semibold",
+    navy: "border-navy/20 bg-navy text-white font-semibold",
+    outline: "border-slate-border bg-white text-navy font-semibold dark:bg-navy dark:text-cream",
+    default: "border-slate-border bg-cream-muted text-slate font-medium",
+  };
+
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-sm border border-border bg-muted px-2.5 py-1 font-mono text-[11px] uppercase tracking-wide text-muted-foreground",
+        "inline-flex items-center rounded-md border px-2.5 py-1 text-xs tracking-wide transition-colors",
+        variantStyles[variant] || variantStyles.default,
         className
       )}
     >
@@ -18,3 +30,4 @@ export function Badge({
     </span>
   );
 }
+

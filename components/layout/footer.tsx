@@ -1,39 +1,40 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 const columns = [
   {
-    title: "Learn",
+    title: "Programs",
     links: [
-      { href: "/courses", label: "Courses" },
-      { href: "/teachers", label: "Teachers" },
-      { href: "/pricing", label: "Pricing" },
+      { href: "/programs", label: "All Programs" },
+      { href: "/teachers", label: "Master Faculty" },
+      { href: "/pricing", label: "Tuition & Pricing" },
       { href: "/book-trial", label: "Book Free Trial" },
     ],
   },
   {
     title: "Company",
     links: [
-      { href: "/about", label: "About" },
+      { href: "/about", label: "About Aevian" },
       { href: "/careers", label: "Careers" },
-      { href: "/blog", label: "Blog" },
-      { href: "/contact", label: "Contact" },
+      { href: "/blog", label: "Blog & Insights" },
+      { href: "/contact", label: "Contact Us" },
     ],
   },
   {
-    title: "Programs",
+    title: "Community",
     links: [
-      { href: "/scholarships", label: "Scholarship Program" },
-      { href: "/affiliates", label: "Affiliate Program" },
-      { href: "/refer", label: "Refer a Friend" },
-      { href: "/success-stories", label: "Student Success Stories" },
+      { href: "/scholarship", label: "Scholarship Program" },
+      { href: "/affiliate", label: "Affiliate Program" },
+      { href: "/referral", label: "Referral Program" },
+      { href: "/reviews", label: "Parent Reviews" },
     ],
   },
   {
     title: "Legal",
     links: [
       { href: "/privacy", label: "Privacy Policy" },
-      { href: "/terms", label: "Terms" },
+      { href: "/terms", label: "Terms of Service" },
       { href: "/cookies", label: "Cookie Policy" },
     ],
   },
@@ -41,28 +42,33 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-card">
-      <Container className="py-16">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-6">
-          <div className="lg:col-span-2">
-            <p className="font-display text-xl">Aevian</p>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Live online classes with real teachers, built around curricula
-              designed to compound.
+    <footer className="border-t border-navy-light bg-navy text-cream pt-16 pb-12">
+      <Container>
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-6 pb-12 border-b border-navy-light/60">
+          <div className="lg:col-span-2 flex flex-col">
+            <Link href="/" aria-label="Aevian Academy">
+              <BrandLogo size="lg" />
+            </Link>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-light">
+              Premier global ed-tech academy connecting students worldwide with top international teachers across IB, IGCSE, SAT, and critical thinking curricula.
             </p>
+            <div className="mt-6 flex items-center gap-3 text-xs text-copper">
+              <span className="h-2 w-2 rounded-full bg-copper animate-pulse" />
+              <span className="font-semibold tracking-wide uppercase">The Learning Path Strategy</span>
+            </div>
           </div>
 
           {columns.map((col) => (
             <div key={col.title}>
-              <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
+              <p className="font-mono text-xs uppercase tracking-wider text-copper font-semibold">
                 {col.title}
               </p>
-              <ul className="mt-4 space-y-3">
+              <ul className="mt-4 space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-foreground/80 hover:text-foreground"
+                      className="text-sm text-slate-light transition-colors hover:text-white"
                     >
                       {link.label}
                     </Link>
@@ -73,11 +79,12 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-border pt-8 text-xs text-muted-foreground sm:flex-row sm:items-center">
-          <p>© {new Date().getFullYear()} Aevian. All rights reserved.</p>
-          <p>Made for students in over 40 countries.</p>
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 text-xs text-slate-light sm:flex-row">
+          <p>© {new Date().getFullYear()} Aevian Academy Inc. All rights reserved.</p>
+          <p className="text-slate-light">Empowering students in over 40 countries globally.</p>
         </div>
       </Container>
     </footer>
   );
 }
+

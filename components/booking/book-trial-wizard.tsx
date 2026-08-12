@@ -403,19 +403,12 @@ export function BookTrialWizard({ teachers }: Props) {
             )}
 
             {step < 5 ? (
-              <Button type="button" variant="primary" onClick={nextStep}>
+              <Button type="button" variant="copper" onClick={nextStep}>
                 Continue
               </Button>
             ) : (
-              <Button type="submit" variant="gold" disabled={loading}>
-                {loading ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" />
-                    Booking trial...
-                  </>
-                ) : (
-                  "Confirm Booking"
-                )}
+              <Button type="submit" variant="copper" isLoading={loading}>
+                Confirm Free Trial
               </Button>
             )}
           </div>
@@ -424,3 +417,4 @@ export function BookTrialWizard({ teachers }: Props) {
     </div>
   );
 }
+

@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 interface AuthCardProps {
   title: string;
@@ -19,31 +20,28 @@ export function AuthCard({
   footerLinkHref,
 }: AuthCardProps) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-xl border border-border bg-card p-8 shadow-sm">
-        <div className="text-center">
-          <Link
-            href="/"
-            className="font-display text-3xl font-semibold tracking-tight text-foreground hover:opacity-90 transition-opacity"
-          >
-            Aevian
+    <div className="flex min-h-screen items-center justify-center bg-cream px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8 rounded-2xl border border-slate-border bg-white p-8 shadow-xl">
+        <div className="text-center flex flex-col items-center">
+          <Link href="/" aria-label="Aevian Academy Home">
+            <BrandLogo size="lg" />
           </Link>
-          <h2 className="mt-6 font-display text-2xl font-medium tracking-tight text-foreground">
+          <h2 className="mt-6 font-display text-2xl font-bold tracking-tight text-navy">
             {title}
           </h2>
           {subtitle && (
-            <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
+            <p className="mt-2 text-sm text-slate">{subtitle}</p>
           )}
         </div>
 
         <div className="mt-8">{children}</div>
 
         {footerText && footerLinkText && footerLinkHref && (
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-sm text-slate">
             {footerText}{" "}
             <Link
               href={footerLinkHref}
-              className="font-medium text-meridian hover:underline hover:text-meridian/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded"
+              className="font-semibold text-copper hover:underline transition-colors"
             >
               {footerLinkText}
             </Link>
@@ -53,3 +51,4 @@ export function AuthCard({
     </div>
   );
 }
+
