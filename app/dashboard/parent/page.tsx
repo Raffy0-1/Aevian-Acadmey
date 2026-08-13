@@ -21,22 +21,28 @@ export default async function ParentDashboardPage() {
   }
 
   // Fetch children and their data
-  const children = await prisma.studentProfile.findMany({
-    where: { parentId: parentProfile.id },
-    include: {
-      user: true,
-      enrollments: {
-        include: { course: true },
-      },
-      bookings: {
-        include: {
-          teacher: { include: { user: true } },
-          course: true,
+  let children: any[] = [];
+  try {
+    children = await prisma.studentProfile.findMany({
+      where: { parentId: parentProfile.id },
+      include: {
+        user: true,
+        enrollments: {
+          include: { course: true },
         },
-        orderBy: { scheduledAt: "desc" },
+        bookings: {
+          include: {
+            teacher: { include: { user: true } },
+            course: true,
+          },
+          orderBy: { scheduledAt: "desc" },
+        },
       },
-    },
-  });
+    });
+  } catch (e) {
+    console.warn("Failed to fetch parent children:", e);
+  }
+
 
   // Map database dates to ISO strings for client compatibility
   const mappedChildren = children.map((child) => ({
@@ -48,13 +54,14 @@ export default async function ParentDashboardPage() {
     gradeLevel: child.gradeLevel ? String(child.gradeLevel) : null,
 
     englishLevel: child.englishLevel ? child.englishLevel.replace(/_/g, " ") : "STANDARD",
-    enrollments: (child.enrollments || []).map((e) => ({
+    enrollments: (child.enrollments || []).map((e: any) => ({
       id: e.id,
       progressPercent: e.progressPercent || 0,
       status: e.status || "ACTIVE",
       course: { title: e.course?.title || "Course" },
     })),
-    bookings: (child.bookings || []).map((b) => ({
+    bookings: (child.bookings || []).map((b: any) => ({
+
       id: b.id,
       scheduledAt: b.scheduledAt ? b.scheduledAt.toISOString() : new Date().toISOString(),
       status: b.status,

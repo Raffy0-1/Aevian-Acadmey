@@ -2,8 +2,10 @@
 // Stage 1: data model only. TODO(stage-3): RLS policies, real payment provider.
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
+
 
 datasource db {
   provider  = "postgresql"

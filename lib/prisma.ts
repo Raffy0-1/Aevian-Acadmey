@@ -10,26 +10,32 @@ function createPrismaClient() {
   const connectionString =
     process.env.DATABASE_URL ||
     process.env.DIRECT_URL ||
-    "postgresql://dummy:dummy@localhost:5432/dummy";
+    "postgresql://postgres:postgres@localhost:5432/postgres";
 
   const pool = new pg.Pool({
     connectionString,
-    connectionTimeoutMillis: 10000,
-    ssl: {
-      rejectUnauthorized: false,
-    },
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+    ssl: connectionString.includes("localhost")
+      ? false
+      : { rejectUnauthorized: false },
   });
 
-  // Catch pool errors so idle connection failures don't crash the server process
   pool.on("error", (err) => {
-    console.error("Prisma Postgres Pool error:", err.message);
+    console.warn("Prisma pg pool error:", err.message);
   });
 
   const adapter = new PrismaPg(pool);
-  return new PrismaClient({ adapter });
+  return new PrismaClient({
+    adapter,
+    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  });
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+
 
