@@ -15,15 +15,17 @@ export type AuthUser = User & {
 export async function getCurrentUser(): Promise<AuthUser | null> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseKey) return null;
+  if (!supabaseUrl || !supabaseKey || supabaseUrl.includes("placeholder")) return null;
 
   try {
     const supabase = await createClient();
     const {
       data: { user: supabaseUser },
+      error: authError,
     } = await supabase.auth.getUser();
 
-    if (!supabaseUser?.email) return null;
+    if (authError || !supabaseUser?.email) return null;
+
 
     let user = await prisma.user.findUnique({
       where: { email: supabaseUser.email },

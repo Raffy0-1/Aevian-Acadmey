@@ -46,53 +46,50 @@ export async function signUp(formData: FormData): Promise<AuthActionResult> {
 
   const { email, password, name, role } = parsed.data;
 
-  const supabase = await createClient();
-
-  // Create Supabase auth user
-  const { error: authError } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { name, role },
-    },
-  });
-
-  if (authError) {
-    return { error: authError.message };
-  }
-
-  // Create Prisma User + profile
   try {
-    const profileData: Record<string, object> = {};
-    if (role === Role.PARENT) {
-      profileData.parentProfile = { create: {} };
-    } else if (role === Role.STUDENT) {
-      profileData.studentProfile = { create: {} };
-    } else if (role === Role.TEACHER) {
-      profileData.teacherProfile = { create: {} };
-    }
+    const supabase = await createClient();
 
-    await prisma.user.create({
-      data: {
-        email,
-        name,
-        role,
-        ...profileData,
+    // Create Supabase auth user
+    const { error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name, role },
       },
     });
-  } catch (e) {
-    // If Prisma user already exists (e.g. from seed data), update it
-    try {
-      const existing = await prisma.user.findUnique({ where: { email } });
-      if (!existing) {
-        console.error("Failed to create user:", e);
-      }
-    } catch {
-      // Ignore Prisma lookup warning
-    }
-  }
 
-  return { success: true, redirectUrl: getDashboardPath(role) };
+    if (authError) {
+      return { error: authError.message };
+    }
+
+    // Create Prisma User + profile
+    try {
+      const profileData: Record<string, object> = {};
+      if (role === Role.PARENT) {
+        profileData.parentProfile = { create: {} };
+      } else if (role === Role.STUDENT) {
+        profileData.studentProfile = { create: {} };
+      } else if (role === Role.TEACHER) {
+        profileData.teacherProfile = { create: {} };
+      }
+
+      await prisma.user.create({
+        data: {
+          email,
+          name,
+          role,
+          ...profileData,
+        },
+      });
+    } catch (e) {
+      console.warn("Prisma user creation warning in signUp:", e);
+    }
+
+    return { success: true, redirectUrl: getDashboardPath(role) };
+  } catch (err: any) {
+    console.error("signUp error:", err);
+    return { error: err?.message || "Failed to sign up. Please try again." };
+  }
 }
 
 /**
@@ -109,37 +106,47 @@ export async function signIn(formData: FormData): Promise<AuthActionResult> {
   }
 
   const { email, password } = parsed.data;
-  const supabase = await createClient();
-
-  const { data: authData, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  let roleStr = (authData?.user?.user_metadata?.role as string) || "PARENT";
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (user?.role) {
-      roleStr = user.role;
+    const supabase = await createClient();
+
+    const { data: authData, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      return { error: error.message };
     }
-  } catch (e) {
-    console.warn("Prisma user lookup warning in signIn:", e);
+
+    let roleStr = (authData?.user?.user_metadata?.role as string) || "PARENT";
+
+    try {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (user?.role) {
+        roleStr = user.role;
+      }
+    } catch (e) {
+      console.warn("Prisma user lookup warning in signIn:", e);
+    }
+
+    return { success: true, redirectUrl: getDashboardPath(roleStr) };
+  } catch (err: any) {
+    console.error("signIn error:", err);
+    return { error: err?.message || "Failed to sign in. Please check credentials or network connection." };
   }
-
-  return { success: true, redirectUrl: getDashboardPath(roleStr) };
 }
-
 
 /**
  * Sign out the current user.
  */
 export async function signOut(): Promise<void> {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
+  try {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  } catch (e) {
+    console.warn("signOut warning:", e);
+  }
   redirect("/");
 }
+

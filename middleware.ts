@@ -46,9 +46,9 @@ export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
-    // If Supabase keys are not set yet, allow access to public pages
-    // and redirect dashboard pages to login (which will display a prompt to set them up)
+  if (!supabaseUrl || !supabaseKey || supabaseUrl.includes("placeholder")) {
+    // If Supabase keys are not set yet or placeholder, allow access to public pages
+    // and redirect dashboard pages to login
     if (request.nextUrl.pathname.startsWith("/dashboard")) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
@@ -56,6 +56,7 @@ export async function middleware(request: NextRequest) {
     }
     return NextResponse.next();
   }
+
 
   let supabaseResponse = NextResponse.next({ request });
 

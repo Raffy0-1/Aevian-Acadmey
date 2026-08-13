@@ -8,30 +8,38 @@ export default async function AdminDashboardPage() {
   const user = await getCurrentUser();
   if (!user || user.role !== "ADMIN") redirect("/dashboard");
 
-  const [
-    userCount,
-    courseCount,
-    enrollmentCount,
-    bookingCount,
-    leadCount,
-    ticketCount,
-    leadsList,
-    usersList,
-  ] = await Promise.all([
-    prisma.user.count(),
-    prisma.course.count(),
-    prisma.enrollment.count(),
-    prisma.booking.count(),
-    prisma.lead.count(),
-    prisma.supportTicket.count(),
-    prisma.lead.findMany({
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 20,
-    }),
-  ]);
+  let userCount = 0, courseCount = 0, enrollmentCount = 0, bookingCount = 0, leadCount = 0, ticketCount = 0;
+  let leadsList: any[] = [];
+  let usersList: any[] = [];
+
+  try {
+    [
+      userCount,
+      courseCount,
+      enrollmentCount,
+      bookingCount,
+      leadCount,
+      ticketCount,
+      leadsList,
+      usersList,
+    ] = await Promise.all([
+      prisma.user.count(),
+      prisma.course.count(),
+      prisma.enrollment.count(),
+      prisma.booking.count(),
+      prisma.lead.count(),
+      prisma.supportTicket.count(),
+      prisma.lead.findMany({
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.user.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+    ]);
+  } catch (e) {
+    console.warn("Failed to fetch admin dashboard stats:", e);
+  }
 
   const stats = [
     { label: "Active Users", value: userCount },
@@ -43,7 +51,7 @@ export default async function AdminDashboardPage() {
   ];
 
   // Map data for client compatibility
-  const mappedLeads = leadsList.map((l) => ({
+  const mappedLeads = (leadsList || []).map((l) => ({
     id: l.id,
     name: l.name,
     email: l.email,
@@ -51,13 +59,14 @@ export default async function AdminDashboardPage() {
     status: l.status,
   }));
 
-  const mappedUsers = usersList.map((u) => ({
+  const mappedUsers = (usersList || []).map((u) => ({
     id: u.id,
     name: u.name,
     email: u.email,
     role: u.role,
-    createdAt: u.createdAt.toISOString(),
+    createdAt: u.createdAt ? u.createdAt.toISOString() : new Date().toISOString(),
   }));
+
 
   return (
     <div className="space-y-8">
