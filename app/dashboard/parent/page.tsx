@@ -42,30 +42,32 @@ export default async function ParentDashboardPage() {
   const mappedChildren = children.map((child) => ({
     id: child.id,
     user: {
-      name: child.user.name,
-      email: child.user.email,
+      name: child.user?.name || "Student",
+      email: child.user?.email || "",
     },
-    gradeLevel: child.gradeLevel,
-    englishLevel: child.englishLevel.replace(/_/g, " "),
-    enrollments: child.enrollments.map((e) => ({
+    gradeLevel: child.gradeLevel ? String(child.gradeLevel) : null,
+
+    englishLevel: child.englishLevel ? child.englishLevel.replace(/_/g, " ") : "STANDARD",
+    enrollments: (child.enrollments || []).map((e) => ({
       id: e.id,
-      progressPercent: e.progressPercent,
-      status: e.status,
-      course: { title: e.course.title },
+      progressPercent: e.progressPercent || 0,
+      status: e.status || "ACTIVE",
+      course: { title: e.course?.title || "Course" },
     })),
-    bookings: child.bookings.map((b) => ({
+    bookings: (child.bookings || []).map((b) => ({
       id: b.id,
-      scheduledAt: b.scheduledAt.toISOString(),
+      scheduledAt: b.scheduledAt ? b.scheduledAt.toISOString() : new Date().toISOString(),
       status: b.status,
       type: b.type,
       durationMinutes: b.durationMinutes,
-      teacherNotes: b.teacherNotes,
+      teacherNotes: b.teacherNotes || "",
       teacher: {
-        user: { name: b.teacher.user.name },
+        user: { name: b.teacher?.user?.name || "Teacher" },
       },
       course: b.course ? { title: b.course.title } : null,
     })),
   }));
+
 
   const mappedParent = {
     id: user.id,

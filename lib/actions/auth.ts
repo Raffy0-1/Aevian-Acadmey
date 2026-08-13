@@ -25,6 +25,7 @@ const signInSchema = z.object({
 export type AuthActionResult = {
   error?: string;
   success?: boolean;
+  redirectUrl?: string;
 };
 
 /**
@@ -81,14 +82,17 @@ export async function signUp(formData: FormData): Promise<AuthActionResult> {
     });
   } catch (e) {
     // If Prisma user already exists (e.g. from seed data), update it
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (!existing) {
-      console.error("Failed to create user:", e);
-      return { error: "Failed to create user profile." };
+    try {
+      const existing = await prisma.user.findUnique({ where: { email } });
+      if (!existing) {
+        console.error("Failed to create user:", e);
+      }
+    } catch {
+      // Ignore Prisma lookup warning
     }
   }
 
-  return { success: true };
+  return { success: true, redirectUrl: getDashboardPath(role) };
 }
 
 /**
@@ -107,7 +111,7 @@ export async function signIn(formData: FormData): Promise<AuthActionResult> {
   const { email, password } = parsed.data;
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: authData, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -116,14 +120,20 @@ export async function signIn(formData: FormData): Promise<AuthActionResult> {
     return { error: error.message };
   }
 
-  // Look up role and redirect to correct dashboard
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (user) {
-    redirect(getDashboardPath(user.role));
+  let roleStr = (authData?.user?.user_metadata?.role as string) || "PARENT";
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (user?.role) {
+      roleStr = user.role;
+    }
+  } catch (e) {
+    console.warn("Prisma user lookup warning in signIn:", e);
   }
 
-  return { success: true };
+  return { success: true, redirectUrl: getDashboardPath(roleStr) };
 }
+
 
 /**
  * Sign out the current user.

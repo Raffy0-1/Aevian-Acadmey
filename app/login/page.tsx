@@ -39,13 +39,18 @@ export default function LoginPage() {
       const res = await signIn(formData);
       if (res?.error) {
         setErrorMsg(res.error);
+        setLoading(false);
+      } else if (res?.redirectUrl) {
+        window.location.href = res.redirectUrl;
+      } else {
+        window.location.href = "/dashboard";
       }
     } catch (err: any) {
       setErrorMsg("An unexpected error occurred. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <AuthCard
