@@ -36,10 +36,11 @@ export function HowItWorks() {
         <ScrollReveal>
           <SectionHeading
             eyebrow="How it works"
-            title="From first class to certificate"
+            title="From first diagnostic to exam success"
             align="center"
             className="mx-auto"
           />
+
         </ScrollReveal>
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <ScrollRevealStagger>

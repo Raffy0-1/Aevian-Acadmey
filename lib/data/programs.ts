@@ -118,27 +118,47 @@ export const programs: ProgramCategory[] = [
   {
     id: "language-skills",
     title: "English Language & Communication Skills",
-    description: "Short, impactful courses to improve fluency, grammar, and professional communication.",
+    description: "Targeted programs to improve spoken fluency, grammar, and formal writing for school exams.",
     courses: [
       {
         slug: "grammar-mastery",
         title: "15-Day Grammar Mastery",
-        description: "Intensive short course to solidify English grammar fundamentals.",
-        targetStudents: "Beginner to Intermediate Learners",
+        description: "Intensive short course to solidify English grammar fundamentals for school assessments.",
+        targetStudents: "Primary and High School Students",
         duration: "15 Days (daily 45-60min)",
-        learningOutcomes: ["Flawless sentence structure", "Confidence in writing", "Correction of common errors"],
-        badges: ["Beginner Friendly", "Short Course"],
-        curriculumTags: ["English Language"],
+        learningOutcomes: ["Flawless sentence structure", "Confidence in exam writing", "Correction of common syntax errors"],
+        badges: ["School Support", "Short Course"],
+        curriculumTags: ["UK Curriculum", "Australian Curriculum"],
         pricing: [
-          { name: "Complete Course", priceGBP: 59, priceUSD: 75, pricePKR: "8,000–15,000", features: ["Daily sessions", "Interactive exercises"] },
+          { name: "Complete Course", priceGBP: 59, priceUSD: 75, pricePKR: "8,000–15,000", features: ["Daily 1-on-1 sessions", "Interactive exam exercises"] },
+        ]
+      }
+    ]
+  },
+  {
+    id: "e-skills-coming-soon",
+    title: "E-Skills & Professional Certifications",
+    description: "Generic skill courses, coding bootcamps, and professional certificates (Launching soon).",
+    courses: [
+      {
+        slug: "coding-for-kids-coming-soon",
+        title: "Python & Creative Coding",
+        description: "Interactive programming for young learners (Enrollments opening soon).",
+        targetStudents: "Ages 10–16",
+        duration: "Coming Soon",
+        learningOutcomes: ["Computational logic", "Python fundamentals", "Project creation"],
+        badges: ["Coming Soon"],
+        curriculumTags: ["E-Skills"],
+        pricing: [
+          { name: "Notify Me", priceGBP: 0, priceUSD: 0, pricePKR: "Coming Soon", features: ["Priority notification list"] },
         ]
       }
     ]
   },
   {
     id: "quran-education",
-    title: "Quran Learning Programs",
-    description: "Dedicated 1-on-1 Quran classes for overseas Muslim families with verified teachers.",
+    title: "Quran & Arabic Foundations",
+    description: "Dedicated 1-on-1 Quran and Arabic reading classes for overseas families with verified native teachers.",
     courses: [
       {
         slug: "quran-reading",
@@ -147,33 +167,13 @@ export const programs: ProgramCategory[] = [
         targetStudents: "Children and Adults",
         duration: "Ongoing",
         learningOutcomes: ["Fluent Quran reading", "Correct pronunciation", "Understanding of basic Tajweed"],
-        badges: ["Beginner Friendly", "Flexible Timings"],
+        badges: ["1-on-1 Learning", "Flexible Timings"],
         curriculumTags: ["Quran"],
         pricing: [
           { name: "3 Classes / Week", priceGBP: 79, priceUSD: 100, pricePKR: "5,000–10,000", features: ["1-on-1 attention", "Tajweed focus"] },
         ]
       }
     ]
-  },
-  {
-    id: "islamic-foundations",
-    title: "Islamic Foundations",
-    description: "Structured Islamic studies courses designed for children and beginners.",
-    courses: [
-      {
-        slug: "islamic-foundations-course",
-        title: "1-Month Islamic Foundations",
-        description: "Learn essential Islamic teachings: Kalimas, Articles of Faith, Wudu, Namaz, and daily manners.",
-        targetStudents: "Children and Beginners",
-        duration: "1 Month",
-        learningOutcomes: ["Memorize 3 Kalimas", "Understand Wudu & Namaz", "Learn daily Islamic manners"],
-        badges: ["Beginner Friendly", "Structured Program"],
-        curriculumTags: ["Islamic Studies"],
-        pricing: [
-          { name: "3 Classes / Week", priceGBP: 79, priceUSD: 100, pricePKR: "8,000–12,000", features: ["Structured curriculum", "Engaging lessons", "45-min sessions"] },
-          { name: "5 Classes / Week", priceGBP: 120, priceUSD: 150, pricePKR: "12,000–18,000", features: ["Accelerated learning", "Daily engagement", "45-min sessions"] },
-        ]
-      }
-    ]
   }
 ];
+

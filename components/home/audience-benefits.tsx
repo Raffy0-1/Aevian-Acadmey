@@ -10,10 +10,11 @@ const parent = [
 
 const student = [
   "Join live classes from any device, no software to install",
-  "Track your own progress and unlock the next module",
-  "Earn certificates tied to real curriculum outcomes",
+  "Track your subject progress with past paper practice",
+  "Targeted prep for UK SATs, GCSEs, A-Levels, NAPLAN & IELTS",
   "Message your teacher directly between classes",
 ];
+
 
 export function AudienceBenefits() {
   return (
