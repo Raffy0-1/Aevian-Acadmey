@@ -4,16 +4,22 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const dbUrl =
+  process.env.DATABASE_URL ||
+  process.env.DIRECT_URL ||
+  "postgresql://postgres:postgres@localhost:5432/postgres";
+
 /**
- * Prisma v7 config — connection URLs moved here from schema.prisma.
- * See https://pris.ly/d/config-datasource
+ * Prisma v7 config — connection URLs defined here.
+ * Fallback values prevent build crashes when env variables are not present.
  */
 export default defineConfig({
   schema: path.join(__dirname, "prisma", "schema.prisma"),
   datasource: {
-    url: process.env.DATABASE_URL!,
+    url: dbUrl,
   },
   migrate: {
-    url: process.env.DIRECT_URL!,
+    url: dbUrl,
   },
 });
+
